@@ -246,7 +246,8 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << indent << "\"recoil_magnitude_alt\" : " << i->second->recoil_magnitude_alt << "," << std::endl;
         json_file << indent << indent << indent << "\"recoil_magnitude_variance_alt\" : " << i->second->recoil_magnitude_variance_alt << "," << std::endl;
         json_file << indent << indent << indent << "\"recoil_seed\" : " << i->second->recoil_seed << "," << std::endl;
-        json_file << indent << indent << indent << "\"full_auto\" : " << i->second->full_auto << "," << std::endl;
+        json_file << indent << indent << indent << "\"full_auto\" : " <<
+            (i->second->full_auto ? "true" : "false") << "," << std::endl;
         json_file << indent << indent << indent << "\"clip_size\" : " << i->second->clip_size << std::endl;
         json_file << indent << indent << "}";
     }
