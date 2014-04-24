@@ -1,0 +1,142 @@
+WeaponData
+{
+	// particle muzzle flash effect to play when fired
+	"MuzzleFlashEffect_1stPerson"	"weapon_muzzle_flash_assaultrifle"
+	"MuzzleFlashEffect_3rdPerson"	"weapon_muzzle_flash_assaultrifle"
+	"HeatEffect"					"weapon_muzzle_smoke"
+	"HeatPerShot"	                "0.3"
+	"AddonScale"			"0.90"
+	"AddonLocation"			"primary_rifle"
+
+	// model for the shell casing to eject when we fire bullets
+	"EjectBrassEffect"		"weapon_shell_casing_rifle"
+
+	// the tracer particle effect and frequency
+	"TracerEffect"			"weapon_tracers_assrifle"
+	// 0 = never, 1 = every shot, 2 = every other, etc
+	"TracerFrequency"		"3"
+
+	"MaxPlayerSpeed"		9001
+	"WeaponType"			"Rifle"
+	"FullAuto"				9002
+	"WeaponPrice"			"2700"
+	"WeaponArmorRatio"		"1.55"
+	"KillAward"				"300"
+	"CrosshairMinDistance"		"4"
+	"CrosshairDeltaDistance"	"4"
+	"Team" 				"TERRORIST"
+	"BuiltRightHanded" 		"1"
+	"PlayerAnimationExtension" 	"ak"
+
+	"CanEquipWithShield"		"0"
+	
+	
+	// Weapon characteristics:
+	"Penetration"			"9003"
+	"Damage"			"9004"
+	"Range"				"9005.5"
+	"RangeModifier"			"9006.5"
+	"Bullets"			"9007"
+	"CycleTime"			"9008.5"
+	"TimeToIdle"			"1.9"
+	"IdleInterval"			"20"
+	FlinchVelocityModifierLarge		0.40
+	FlinchVelocityModifierSmall		0.55
+	
+	// accuracy model parameters
+	"Spread"					9009.5
+	"InaccuracyCrouch"			9010.5
+	"InaccuracyStand"			9011.5
+	"InaccuracyJump"			9012.5
+	"InaccuracyLand"			9013.5
+	"InaccuracyLadder"			9014.5
+	"InaccuracyFire"			9015.5
+	"InaccuracyMove"			9016.5
+	
+	"RecoveryTimeCrouch"		9017.5
+	"RecoveryTimeStand"			9018.5
+
+	
+	"RecoilAngle"					9019.5
+	"RecoilAngleVariance"			9020.5
+	"RecoilMagnitude"				9021.5
+	"RecoilMagnitudeVariance"		9022.5
+	"RecoilSeed"			9023
+								 
+	// Weapon data is loaded by both the Game and Client DLLs.
+	"printname"			"#SFUI_WPNHUD_AK47"
+	"viewmodel"			"models/weapons/v_rif_ak47.mdl"
+	"playermodel"			"models/weapons/w_rif_ak47.mdl"
+	
+	"anim_prefix"			"anim"
+	"bucket"			"0"
+	"bucket_position"		"0"
+
+	"clip_size"			"9024"
+	"default_clip"			"-1"
+	"default_clip2"			"-1"
+	
+	"primary_ammo"			"BULLET_PLAYER_762MM"
+	"secondary_ammo"		"None"
+
+	"weight"			"25"
+	"item_flags"			"0"
+	
+	"rumble"			"4"
+
+	// Sounds for the weapon. There is a max of 16 sounds per category (i.e. max 16 "single_shot" sounds)
+	SoundData
+	{
+		"single_shot"		"Weapon_AK47.Single"
+	}
+
+	// Weapon Sprite data is loaded by the Client DLL.
+	TextureData
+	{
+		//Weapon Select Images
+		"weapon"
+		{
+				"font"		"CSweaponsSmall"
+				"character"	"B"
+		}
+		"weapon_s"
+		{	
+				"font"		"CSweapons"
+				"character"	"B"
+		}
+		"ammo"
+		{
+				"font"		"CSTypeDeath"
+				"character"		"V"
+		}
+		"crosshair"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"0"
+				"y"			"48"
+				"width"		"24"
+				"height"	"24"
+		}
+		"autoaim"
+		{
+				"file"		"sprites/crosshairs"
+				"x"			"0"
+				"y"			"48"
+				"width"		"24"
+				"height"	"24"
+		}
+	}
+	ModelBounds
+	{
+		Viewmodel
+		{
+			Mins	"-9 -3 -13"
+			Maxs	"30 11 0"
+		}
+		World
+		{
+			Mins	"-9 -9 -9"
+			Maxs	"30 9 7"
+		}
+	}
+}
