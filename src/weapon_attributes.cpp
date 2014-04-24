@@ -260,7 +260,7 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
     json_file << indent << "\"version\" : \"" << version << "\"," << std::endl;
 
     // write weapon data
-    json_file << indent << "\"weapons\" : {";
+    json_file << indent << "\"weapons\" : [";
     bool first_entry = true;
     for (weapon_attrs_t::const_iterator i = weapon_attrs_.begin(), e = weapon_attrs_.end(); i != e; ++i)
     {
@@ -269,7 +269,8 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         else
             first_entry = false;
         json_file << std::endl;
-        json_file << indent << indent << "\"" << i->first << "\" : {" << std::endl;
+        json_file << indent << indent << "{" << std::endl;
+        json_file << indent << indent << indent << "\"name\" : \"" << i->first << "\"," << std::endl;
         json_file << indent << indent << indent << "\"type\" : \"" << i->second->item_type << "\"," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed\" : " << i->second->max_player_speed << "," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed_alt\" : " << i->second->max_player_speed_alt << "," << std::endl;
@@ -314,7 +315,7 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << "}";
     }
 
-    json_file << std::endl << indent << "}" << std::endl;
+    json_file << std::endl << indent << "]" << std::endl;
     json_file << "}" << std::endl;
 }
 
