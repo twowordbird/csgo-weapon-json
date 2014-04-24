@@ -271,6 +271,14 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << std::endl;
         json_file << indent << indent << "\"" << i->first << "\" : {" << std::endl;
         json_file << indent << indent << indent << "\"type\" : \"" << i->second->item_type << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"max_player_speed\" : " << i->second->max_player_speed << "," << std::endl;
+        json_file << indent << indent << indent << "\"max_player_speed_alt\" : " << i->second->max_player_speed_alt << "," << std::endl;
+        json_file << indent << indent << indent << "\"penetration\" : " << i->second->penetration << "," << std::endl;
+        json_file << indent << indent << indent << "\"damage\" : " << i->second->damage << "," << std::endl;
+        json_file << indent << indent << indent << "\"range\" : " << i->second->range << "," << std::endl;
+        json_file << indent << indent << indent << "\"range_modifier\" : " << i->second->range_modifier << "," << std::endl;
+        json_file << indent << indent << indent << "\"recovery_time_crouch\" : " << i->second->recovery_time_crouch << "," << std::endl;
+        json_file << indent << indent << indent << "\"recovery_time_stand\" : " << i->second->recovery_time_stand << "," << std::endl;
         json_file << indent << indent << indent << "\"bullets\" : " << i->second->bullets << "," << std::endl;
         json_file << indent << indent << indent << "\"cycle_time\" : " << i->second->cycle_time << "," << std::endl;
         json_file << indent << indent << indent << "\"cycle_time_alt\" : " << i->second->cycle_time_alt << "," << std::endl;
