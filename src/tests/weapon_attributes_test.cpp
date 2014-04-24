@@ -11,7 +11,8 @@ void WeaponAttributesTest::setUp()
     std::string test_dir(TEST_DIR);
     std::string manifest_file = test_dir + "/weapon_attributes_test/weapon_manifest.txt";
     std::string items_script_file = test_dir + "/weapon_attributes_test/items/items_game.txt";
-    weapon_db_test_ = new WeaponAttributesDatabase(manifest_file.c_str(), items_script_file.c_str());
+    std::string resource_file = test_dir + "/weapon_attributes_test/csgo_english.txt";
+    weapon_db_test_ = new WeaponAttributesDatabase(manifest_file.c_str(), items_script_file.c_str(), resource_file.c_str());
 }
 
 void WeaponAttributesTest::tearDown()
@@ -21,9 +22,10 @@ void WeaponAttributesTest::tearDown()
 
 void WeaponAttributesTest::testWeaponP250()
 {
-    const WeaponAttributes* weapon_p250 = weapon_db_test_->get("weapon_p250");
+    const WeaponAttributes* weapon_p250 = weapon_db_test_->get("P250");
     CPPUNIT_ASSERT( weapon_p250 != NULL );
 
+    CPPUNIT_ASSERT_EQUAL(std::string("Pistol"), weapon_p250->item_type);
     CPPUNIT_ASSERT_EQUAL(0,         weapon_p250->full_auto);
     CPPUNIT_ASSERT_EQUAL(0.15f,     (float)::atof(weapon_p250->cycle_time.c_str()));
     CPPUNIT_ASSERT_EQUAL(0.f,       (float)::atof(weapon_p250->recoil_angle.c_str()));
@@ -43,9 +45,10 @@ void WeaponAttributesTest::testWeaponP250()
 
 void WeaponAttributesTest::testWeaponCz75a()
 {
-    const WeaponAttributes* weapon_cz75a = weapon_db_test_->get("weapon_cz75a");
+    const WeaponAttributes* weapon_cz75a = weapon_db_test_->get("CZ75-Auto");
     CPPUNIT_ASSERT( weapon_cz75a != NULL );
 
+    CPPUNIT_ASSERT_EQUAL(std::string("Pistol"), weapon_cz75a->item_type);
     CPPUNIT_ASSERT_EQUAL(1,         weapon_cz75a->full_auto);
     CPPUNIT_ASSERT_EQUAL(0.1f,      (float)::atof(weapon_cz75a->cycle_time.c_str()));
     CPPUNIT_ASSERT_EQUAL(0.f,       (float)::atof(weapon_cz75a->recoil_angle.c_str()));
@@ -65,7 +68,7 @@ void WeaponAttributesTest::testWeaponCz75a()
 
 void WeaponAttributesTest::testWeaponTest()
 {
-    const WeaponAttributes* weapon_test = weapon_db_test_->get("weapon_test");
+    const WeaponAttributes* weapon_test = weapon_db_test_->get("Test");
     CPPUNIT_ASSERT( weapon_test != NULL );
 
     CPPUNIT_ASSERT_EQUAL(9001,      weapon_test->max_player_speed);

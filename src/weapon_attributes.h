@@ -9,8 +9,9 @@ class KeyValues;
 struct WeaponAttributes
 {
 public:
-    WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs);
+    WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs, const std::string& item_type);
 
+    std::string item_type;
     int max_player_speed, max_player_speed_alt;
     int penetration, damage;
     std::string range, range_modifier;
@@ -34,7 +35,7 @@ class WeaponAttributesDatabase
 {
 public:
 
-    WeaponAttributesDatabase(const char* manifest_filename, const char* items_script_filename);
+    WeaponAttributesDatabase(const char* manifest_filename, const char* items_script_filename, const char* resource_filename);
 
     const WeaponAttributes* get(const char* weapon_name) const;
     void write_json(const char* filename, const char* version) const;

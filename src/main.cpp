@@ -47,7 +47,8 @@ int main(int argc, char* argv[])
     std::string csgo_dir(argv[1]);
     std::string manifest_filename = csgo_dir + "/csgo/scripts/weapon_manifest.txt";
     std::string item_script_filename = csgo_dir + "/csgo/scripts/items/items_game.txt";
-    WeaponAttributesDatabase weapon_db(manifest_filename.c_str(), item_script_filename.c_str());
+    std::string resource_filename = csgo_dir + "/csgo/resource/csgo_english.txt";
+    WeaponAttributesDatabase weapon_db(manifest_filename.c_str(), item_script_filename.c_str(), resource_filename.c_str());
 
     // read version number
     std::string steam_inf_filename = csgo_dir + "/csgo/steam.inf";

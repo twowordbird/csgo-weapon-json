@@ -11,6 +11,11 @@
 
 typedef std::map<std::string, KeyValues*> kv_map_t;
 
+bool is_ascii(char c1, char c2)
+{
+    return (c1 < 128 && c2 == 0);
+}
+
 const char* load_file_to_buffer(const char* filename)
 {
     std::ifstream ifs(filename);
@@ -26,9 +31,37 @@ const char* load_file_to_buffer(const char* filename)
 
     char* buffer = new char[length+1];
     ifs.read(buffer, length);
-    buffer[length] = '\0'; // add null terminator
 
-    return buffer;
+    // hack for UTF-16
+    if (buffer[0] == '\377' && buffer[1] == '\376') // LE
+    {
+        // count number of ascii characters
+        int ascii_length = 0;
+        for (int i = 2; i < length; i += 2)
+        {
+            // throw away every nonascii character
+            if (is_ascii(buffer[i], buffer[i+1]))
+                ++ascii_length;
+        }
+
+        // copy ascii characters to new buffer
+        char* ascii_buffer = new char[ascii_length];
+        int j = 0;
+        for (int i = 2; i < length; i += 2)
+        {
+            // throw away every nonascii character
+            if (is_ascii(buffer[i], buffer[i+1]))
+                ascii_buffer[j++] = buffer[i];
+        }
+        delete[] buffer;
+        ascii_buffer[j] = '\0';
+        return ascii_buffer;
+    }
+    else
+    {
+        buffer[length] = '\0';
+        return buffer;
+    }
 }
 
 KeyValues* load_key_values(const char* name, const char* filename)
@@ -163,10 +196,26 @@ kv_map_t load_items_script(const char* filename)
     return item_map;
 }
 
-WeaponAttributesDatabase::WeaponAttributesDatabase(const char* manifest_filename, const char* items_script_filename)
+const char* trim_leading_pound(const char* s)
+{
+    if (s[0] == '#')
+        return &s[1];
+}
+
+WeaponAttributesDatabase::WeaponAttributesDatabase(const char* manifest_filename, const char* items_script_filename, const char* resource_filename)
 {
     kv_map_t item_classes = load_manifest(manifest_filename);
     kv_map_t items = load_items_script(items_script_filename);
+
+    // create and load resource KeyValues
+    static const char resources_name[] = "resources";
+    KeyValues* resources = load_key_values(resources_name, resource_filename)->FindKey("Tokens");
+    if (!resources)
+    {
+        std::stringstream ss;
+        ss << "Failed to find Tokens in \"" << resource_filename << "\"";
+        throw std::runtime_error(ss.str());
+    }
 
     // build ItemAttributes from above
     for (kv_map_t::iterator i = items.begin(), e = items.end(); i != e; ++i)
@@ -178,7 +227,10 @@ WeaponAttributesDatabase::WeaponAttributesDatabase(const char* manifest_filename
             ss << "Failed to find item_class \"" << i->second->GetString("item_class") << "\" for item \"" << i->first << "\"";
             throw std::runtime_error(ss.str());
         }
-        boost::assign::ptr_map_insert<WeaponAttributes>( weapon_attrs_ )( i->first, item_class->second, i->second );
+
+        std::string item_name(resources->GetString(trim_leading_pound(i->second->GetString("item_name"))));
+        std::string item_type(resources->GetString(trim_leading_pound(i->second->GetString("item_type_name"))));
+        boost::assign::ptr_map_insert<WeaponAttributes>( weapon_attrs_ )( item_name, item_class->second, i->second, item_type );
     }
 }
 
@@ -218,6 +270,7 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
             first_entry = false;
         json_file << std::endl;
         json_file << indent << indent << "\"" << i->first << "\" : {" << std::endl;
+        json_file << indent << indent << indent << "\"type\" : \"" << i->second->item_type << "\"," << std::endl;
         json_file << indent << indent << indent << "\"bullets\" : " << i->second->bullets << "," << std::endl;
         json_file << indent << indent << indent << "\"cycle_time\" : " << i->second->cycle_time << "," << std::endl;
         json_file << indent << indent << indent << "\"cycle_time_alt\" : " << i->second->cycle_time_alt << "," << std::endl;
@@ -256,7 +309,8 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
     json_file << "}" << std::endl;
 }
 
-WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs)
+WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs, const std::string& item_type):
+    item_type(item_type)
 {
     // initially set to item_class, or default
     max_player_speed               = item_class->GetInt("MaxPlayerSpeed", 1);
