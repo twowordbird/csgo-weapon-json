@@ -6,11 +6,10 @@ CSGO_DIR = /home/chris/Steam/games/csgo_ds
 
 CXXFLAGS += -g -m32 -msse3 -DPLATFORM_POSIX -D_LINUX -DCOMPILER_GCC -DCSGO_DIR=\"$(CSGO_DIR)\" \
 	-DTEST_DIR=\"$(SRC_DIR)/tests\" -I$(HL2SDK_DIR)/public -I$(SRC_DIR)
-LDFLAGS += -L$(CSGO_DIR)/bin -L$(CSGO_DIR)/csgo/bin -L$(HL2SDK_DIR)/lib/linux \
+LDFLAGS += -L$(CSGO_DIR)/bin -L$(HL2SDK_DIR)/lib/linux \
 	$(HL2SDK_DIR)/lib/linux/tier1_i486.a \
-	-ltier0_srv -lvstdlib -lpthread -ldl \
-	-Wl,-rpath=$(CSGO_DIR)/bin -Wl,-rpath=$(HL2SDK_DIR)/lib/linux \
-	-Wl,-rpath=/usr/local/lib
+	-ltier0_srv -lvstdlib \
+	-Wl,-rpath=$(CSGO_DIR)/bin -Wl,-rpath=$(HL2SDK_DIR)/lib/linux
 
 BIN = weaponjson runtests
 
@@ -37,4 +36,3 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -rf $(BIN) $(OBJ) $(TEST_OBJ)
-
