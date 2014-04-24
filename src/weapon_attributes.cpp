@@ -309,7 +309,8 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << indent << "\"recoil_seed\" : " << i->second->recoil_seed << "," << std::endl;
         json_file << indent << indent << indent << "\"full_auto\" : " <<
             (i->second->full_auto ? "true" : "false") << "," << std::endl;
-        json_file << indent << indent << indent << "\"clip_size\" : " << i->second->clip_size << std::endl;
+        json_file << indent << indent << indent << "\"clip_size\" : " << i->second->clip_size << "," << std::endl;
+        json_file << indent << indent << indent << "\"armor_ratio\" : " << i->second->armor_ratio << std::endl;
         json_file << indent << indent << "}";
     }
 
@@ -361,6 +362,7 @@ WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attr
     recovery_time_stand            = item_class->GetString("RecoveryTimeStand", "1.0");
     full_auto                      = item_class->GetInt("FullAuto", 0);
     clip_size                      = item_class->GetInt("clip_size", 1);
+    armor_ratio                    = item_class->GetString("WeaponArmorRatio", "1.0");
 
     // apply attributes from weapon_attrs
     KeyValues* attrs = weapon_attrs->FindKey("attributes");
@@ -409,4 +411,5 @@ WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attr
     recovery_time_stand            = attrs->GetString("recovery time stand", recovery_time_stand.c_str());
     full_auto                      = attrs->GetInt("is full auto", full_auto);
     clip_size                      = attrs->GetInt("primary clip size", clip_size);
+    armor_ratio                    = attrs->GetString("armor ratio", armor_ratio.c_str());
 }

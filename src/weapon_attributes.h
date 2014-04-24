@@ -28,6 +28,7 @@ public:
     int recoil_seed;
     std::string inaccuracy_reload, inaccuracy_alt_switch;
     std::string recovery_time_crouch, recovery_time_stand;
+    std::string armor_ratio;
     int full_auto, clip_size;
 };
 
