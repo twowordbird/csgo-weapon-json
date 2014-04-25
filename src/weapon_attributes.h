@@ -10,6 +10,7 @@ struct WeaponAttributes
 {
 public:
     WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs, const std::string& item_type);
+    WeaponAttributes(KeyValues* item_class, const std::string& item_type);
 
     std::string item_type;
     int max_player_speed, max_player_speed_alt;
@@ -30,6 +31,10 @@ public:
     std::string recovery_time_crouch, recovery_time_stand;
     std::string armor_ratio;
     int full_auto, clip_size;
+
+private:
+    void load_item_class(KeyValues* item_class);
+    void load_weapon_attrs(KeyValues* weapon_attrs);
 };
 
 class WeaponAttributesDatabase

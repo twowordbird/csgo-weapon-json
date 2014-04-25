@@ -127,6 +127,14 @@ kv_map_t load_manifest(const char* filename)
 
         // create and load KeyValues
         KeyValues* script = load_key_values(file->GetString(), script_filename_ss.str().c_str());
+
+        // check if WeaponType is one that we care about
+        typedef std::set<std::string> item_type_t;
+        static item_type_t item_types = boost::assign::list_of ("Pistol") ("Rifle") ("Shotgun") ("SniperRifle") ("Machinegun") ("SubMachinegun");
+        item_type_t::const_iterator i = item_types.find(script->GetString("WeaponType"));
+        if (i == item_types.end())
+            continue;
+
         manifest_files.insert(kv_map_t::value_type(file->GetString(), script));
     }
     return manifest_files;
@@ -200,12 +208,22 @@ const char* trim_leading_pound(const char* s)
 {
     if (s[0] == '#')
         return &s[1];
+    else
+        return s;
 }
 
 WeaponAttributesDatabase::WeaponAttributesDatabase(const char* manifest_filename, const char* items_script_filename, const char* resource_filename)
 {
     kv_map_t item_classes = load_manifest(manifest_filename);
-    kv_map_t items = load_items_script(items_script_filename);
+    kv_map_t items;
+    try
+    {
+        items = load_items_script(items_script_filename);
+    }
+    catch (std::runtime_error e)
+    {
+        std::cerr << "Failed to load items script, using item classes only" << std::endl;
+    }
 
     // create and load resource KeyValues
     static const char resources_name[] = "resources";
@@ -217,20 +235,48 @@ WeaponAttributesDatabase::WeaponAttributesDatabase(const char* manifest_filename
         throw std::runtime_error(ss.str());
     }
 
-    // build ItemAttributes from above
-    for (kv_map_t::iterator i = items.begin(), e = items.end(); i != e; ++i)
+    // older version don't use the items_script
+    if (items.size() > 0)
     {
-        kv_map_t::iterator item_class = item_classes.find(i->second->GetString("item_class"));
-        if (item_class == item_classes.end())
+        // build ItemAttributes from above
+        for (kv_map_t::iterator i = items.begin(), e = items.end(); i != e; ++i)
         {
-            std::stringstream ss;
-            ss << "Failed to find item_class \"" << i->second->GetString("item_class") << "\" for item \"" << i->first << "\"";
-            throw std::runtime_error(ss.str());
-        }
+            kv_map_t::iterator item_class = item_classes.find(i->second->GetString("item_class"));
+            if (item_class == item_classes.end())
+            {
+                std::stringstream ss;
+                ss << "Failed to find item_class \"" << i->second->GetString("item_class") << "\" for item \"" << i->first << "\"";
+                throw std::runtime_error(ss.str());
+            }
 
-        std::string item_name(resources->GetString(trim_leading_pound(i->second->GetString("item_name"))));
-        std::string item_type(resources->GetString(trim_leading_pound(i->second->GetString("item_type_name"))));
-        boost::assign::ptr_map_insert<WeaponAttributes>( weapon_attrs_ )( item_name, item_class->second, i->second, item_type );
+            // parse item name and convert via resource file
+            std::string item_name = item_class->second->GetString("printname", "Unknown");
+            item_name = i->second->GetString("item_name", item_name.c_str());
+            item_name = resources->GetString(trim_leading_pound(item_name.c_str()), item_name.c_str());
+
+            // parse item type and convert via resource file
+            std::string item_type = item_class->second->GetString("WeaponType", "Unknown");
+            item_type = i->second->GetString("item_type_name", item_type.c_str());
+            item_type = resources->GetString(trim_leading_pound(item_type.c_str()), item_type.c_str());
+
+            boost::assign::ptr_map_insert<WeaponAttributes>( weapon_attrs_ )( item_name, item_class->second, i->second, item_type );
+        }
+    }
+    else
+    {
+        // build ItemAttributes from above
+        for (kv_map_t::iterator i = item_classes.begin(), e = item_classes.end(); i != e; ++i)
+        {
+            // parse item name and convert via resource file
+            std::string item_name = i->second->GetString("printname", "Unknown");
+            item_name = resources->GetString(trim_leading_pound(item_name.c_str()), item_name.c_str());
+
+            // parse item type and convert via resource file
+            std::string item_type = i->second->GetString("WeaponType", "Unknown");
+            item_type = resources->GetString(trim_leading_pound(item_type.c_str()), item_type.c_str());
+
+            boost::assign::ptr_map_insert<WeaponAttributes>( weapon_attrs_ )( item_name, i->second, item_type );
+        }
     }
 }
 
@@ -319,10 +365,21 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
     json_file << "}" << std::endl;
 }
 
+WeaponAttributes::WeaponAttributes(KeyValues* item_class, const std::string& item_type):
+    item_type(item_type)
+{
+    load_item_class(item_class);
+}
+
 WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attrs, const std::string& item_type):
     item_type(item_type)
 {
-    // initially set to item_class, or default
+    load_item_class(item_class);
+    load_weapon_attrs(weapon_attrs);
+}
+
+void WeaponAttributes::load_item_class(KeyValues* item_class)
+{
     max_player_speed               = item_class->GetInt("MaxPlayerSpeed", 1);
     max_player_speed_alt           = item_class->GetInt("MaxPlayerSpeedAlt", max_player_speed);
     penetration                    = item_class->GetInt("Penetration", 1);
@@ -364,7 +421,10 @@ WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attr
     full_auto                      = item_class->GetInt("FullAuto", 0);
     clip_size                      = item_class->GetInt("clip_size", 1);
     armor_ratio                    = item_class->GetString("WeaponArmorRatio", "1.0");
+}
 
+void WeaponAttributes::load_weapon_attrs(KeyValues* weapon_attrs)
+{
     // apply attributes from weapon_attrs
     KeyValues* attrs = weapon_attrs->FindKey("attributes");
     if (attrs == NULL)
