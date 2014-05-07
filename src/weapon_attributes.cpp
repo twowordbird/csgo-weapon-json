@@ -318,11 +318,11 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << "{" << std::endl;
         json_file << indent << indent << indent << "\"name\" : \"" << i->first << "\"," << std::endl;
         json_file << indent << indent << indent << "\"type\" : \"" << i->second->item_type << "\"," << std::endl;
-        json_file << indent << indent << indent << "\"price\" : \"" << i->second->price << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"price\" : " << i->second->price << "," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed\" : " << i->second->max_player_speed << "," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed_alt\" : " << i->second->max_player_speed_alt << "," << std::endl;
-        json_file << indent << indent << indent << "\"flinch_velocity_modifier_large\" : \"" << i->second->flinch_velocity_mod_large << "\"," << std::endl;
-        json_file << indent << indent << indent << "\"flinch_velocity_modifier_small\" : \"" << i->second->flinch_velocity_mod_small << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"flinch_velocity_modifier_large\" : " << i->second->flinch_velocity_mod_large << "," << std::endl;
+        json_file << indent << indent << indent << "\"flinch_velocity_modifier_small\" : " << i->second->flinch_velocity_mod_small << "," << std::endl;
         json_file << indent << indent << indent << "\"penetration\" : " << i->second->penetration << "," << std::endl;
         json_file << indent << indent << indent << "\"damage\" : " << i->second->damage << "," << std::endl;
         json_file << indent << indent << indent << "\"range\" : " << i->second->range << "," << std::endl;
