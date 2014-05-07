@@ -14,6 +14,7 @@ public:
 
     std::string item_type;
     int max_player_speed, max_player_speed_alt;
+    std::string flinch_velocity_mod_small, flinch_velocity_mod_large;
     int penetration, damage;
     std::string range, range_modifier;
     int bullets;
@@ -31,6 +32,7 @@ public:
     std::string recovery_time_crouch, recovery_time_stand;
     std::string armor_ratio;
     int full_auto, clip_size;
+    int price;
 
 private:
     void load_item_class(KeyValues* item_class);

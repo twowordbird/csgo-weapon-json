@@ -318,8 +318,11 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << "{" << std::endl;
         json_file << indent << indent << indent << "\"name\" : \"" << i->first << "\"," << std::endl;
         json_file << indent << indent << indent << "\"type\" : \"" << i->second->item_type << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"price\" : \"" << i->second->price << "\"," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed\" : " << i->second->max_player_speed << "," << std::endl;
         json_file << indent << indent << indent << "\"max_player_speed_alt\" : " << i->second->max_player_speed_alt << "," << std::endl;
+        json_file << indent << indent << indent << "\"flinch_velocity_modifier_large\" : \"" << i->second->flinch_velocity_mod_large << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"flinch_velocity_modifier_small\" : \"" << i->second->flinch_velocity_mod_small << "\"," << std::endl;
         json_file << indent << indent << indent << "\"penetration\" : " << i->second->penetration << "," << std::endl;
         json_file << indent << indent << indent << "\"damage\" : " << i->second->damage << "," << std::endl;
         json_file << indent << indent << indent << "\"range\" : " << i->second->range << "," << std::endl;
@@ -380,8 +383,11 @@ WeaponAttributes::WeaponAttributes(KeyValues* item_class, KeyValues* weapon_attr
 
 void WeaponAttributes::load_item_class(KeyValues* item_class)
 {
+    price                          = item_class->GetInt("WeaponPrice", 0x0FFFFFFFF);
     max_player_speed               = item_class->GetInt("MaxPlayerSpeed", 1);
     max_player_speed_alt           = item_class->GetInt("MaxPlayerSpeedAlt", max_player_speed);
+    flinch_velocity_mod_large      = item_class->GetString("FlinchVelocityModifierLarge", "1.0");
+    flinch_velocity_mod_small      = item_class->GetString("FlinchVelocityModifierSmall", "1.0");
     penetration                    = item_class->GetInt("Penetration", 1);
     damage                         = item_class->GetInt("Damage", 42);
     range                          = item_class->GetString("Range", "8192.0");
@@ -434,8 +440,11 @@ void WeaponAttributes::load_weapon_attrs(KeyValues* weapon_attrs)
         throw std::runtime_error(ss.str());
     }
 
+    price                          = attrs->GetInt("in game price", price);
     max_player_speed               = attrs->GetInt("max player speed", max_player_speed);
     max_player_speed_alt           = attrs->GetInt("max player speed alt", max_player_speed_alt);
+    flinch_velocity_mod_large      = attrs->GetString("flinch velocity modifier large", flinch_velocity_mod_large.c_str());
+    flinch_velocity_mod_small      = attrs->GetString("flinch velocity modifier small", flinch_velocity_mod_small.c_str());
     penetration                    = attrs->GetInt("Penetration", penetration);
     damage                         = attrs->GetInt("Damage", damage);
     range                          = attrs->GetString("Range", range.c_str());
