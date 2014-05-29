@@ -45,7 +45,7 @@ const char* load_file_to_buffer(const char* filename)
         }
 
         // copy ascii characters to new buffer
-        char* ascii_buffer = new char[ascii_length];
+        char* ascii_buffer = new char[ascii_length+1];
         int j = 0;
         for (int i = 2; i < length; i += 2)
         {
