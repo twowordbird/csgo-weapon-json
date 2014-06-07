@@ -33,6 +33,7 @@ public:
     std::string armor_ratio;
     int full_auto, clip_size;
     int price;
+    std::string model_world, model_player;
 
 private:
     void load_item_class(KeyValues* item_class);

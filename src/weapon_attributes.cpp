@@ -157,10 +157,12 @@ void chain_to_prefabs(KeyValues* items, KeyValues* prefabs)
             // chain attributes first
             KeyValues* item_attrs = item->FindKey("attributes", true);
             KeyValues* prefab_attrs = prefab->FindKey("attributes", true);
-            item_attrs->ChainKeyValue(prefab_attrs);
+            item_attrs->ChainKeyValue(item);
+            item->ChainKeyValue(prefab_attrs);
+            prefab_attrs->ChainKeyValue(prefab);
 
             // then chain base
-            item->ChainKeyValue(prefab);
+            //item->ChainKeyValue(prefab);
         }
     }
 }
@@ -360,7 +362,9 @@ void WeaponAttributesDatabase::write_json(const char* filename, const char* vers
         json_file << indent << indent << indent << "\"full_auto\" : " <<
             (i->second->full_auto ? "true" : "false") << "," << std::endl;
         json_file << indent << indent << indent << "\"clip_size\" : " << i->second->clip_size << "," << std::endl;
-        json_file << indent << indent << indent << "\"armor_ratio\" : " << i->second->armor_ratio << std::endl;
+        json_file << indent << indent << indent << "\"armor_ratio\" : " << i->second->armor_ratio << "," << std::endl;
+        json_file << indent << indent << indent << "\"model_world\" : \"" << i->second->model_world << "\"," << std::endl;
+        json_file << indent << indent << indent << "\"model_player\" : \"" << i->second->model_player << "\"" << std::endl;
         json_file << indent << indent << "}";
     }
 
@@ -427,6 +431,8 @@ void WeaponAttributes::load_item_class(KeyValues* item_class)
     full_auto                      = item_class->GetInt("FullAuto", 0);
     clip_size                      = item_class->GetInt("clip_size", 1);
     armor_ratio                    = item_class->GetString("WeaponArmorRatio", "1.0");
+    model_world                    = item_class->GetString("viewmodel", "");
+    model_player                   = item_class->GetString("playermodel", "");
 }
 
 void WeaponAttributes::load_weapon_attrs(KeyValues* weapon_attrs)
@@ -482,4 +488,6 @@ void WeaponAttributes::load_weapon_attrs(KeyValues* weapon_attrs)
     full_auto                      = attrs->GetInt("is full auto", full_auto);
     clip_size                      = attrs->GetInt("primary clip size", clip_size);
     armor_ratio                    = attrs->GetString("armor ratio", armor_ratio.c_str());
+    model_world                    = attrs->GetString("model_world", model_world.c_str());
+    model_player                   = attrs->GetString("model_player", model_player.c_str());
 }
